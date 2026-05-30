@@ -1,0 +1,39 @@
+{
+  "name": "cartory-reseller-hub",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "api:dev": "node backend/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "latest",
+    "cloudinary": "latest",
+    "cors": "latest",
+    "csrf-csrf": "latest",
+    "express": "latest",
+    "express-rate-limit": "latest",
+    "framer-motion": "latest",
+    "helmet": "latest",
+    "jsonwebtoken": "latest",
+    "lucide-react": "latest",
+    "next": "15.3.5",
+    "next-auth": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest",
+    "slugify": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "tailwindcss": "^3.4.17",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}

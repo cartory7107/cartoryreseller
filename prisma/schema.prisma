@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  RESELLER
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  MORE_INFO_REQUESTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id                 String             @id @default(cuid())
+  name               String
+  email              String             @unique
+  phone              String?
+  country            String             @default("Bangladesh")
+  role               Role               @default(RESELLER)
+  verificationStatus VerificationStatus @default(PENDING)
+  identityDocument   String?
+  passwordHash        String?
+  products           ResellerProduct[]
+  orders             Order[]
+  notifications      Notification[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model Product {
+  id              String            @id @default(cuid())
+  name            String
+  slug            String            @unique
+  description     String
+  seoTitle        String?
+  seoDescription  String?
+  metaTags        String[]
+  imageUrl        String?
+  galleryImages   String[]
+  videoUrl        String?
+  baseCostPrice   Decimal
+  category        String
+  stockStatus     String
+  featured        Boolean           @default(false)
+  published       Boolean           @default(false)
+  resellerOffers  ResellerProduct[]
+  orders          Order[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model ResellerProduct {
+  id           String  @id @default(cuid())
+  resellerId   String
+  productId    String
+  sellingPrice Decimal
+  reseller     User    @relation(fields: [resellerId], references: [id])
+  product      Product @relation(fields: [productId], references: [id])
+
+  @@unique([resellerId, productId])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  resellerId    String
+  productId     String
+  customerName  String
+  phone         String
+  address       String
+  city          String
+  area          String
+  notes         String?
+  sellingPrice  Decimal
+  basePrice     Decimal
+  profit        Decimal
+  commission    Decimal
+  status        OrderStatus @default(PENDING)
+  reseller      User        @relation(fields: [resellerId], references: [id])
+  product       Product     @relation(fields: [productId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  thumbnail   String?
+  instructor  String
+  description String
+  seoData     Json?
+  videoUrl    String?
+  externalUrl String?
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model NewsPost {
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  description    String
+  thumbnail      String?
+  seoMetadata    Json?
+  publishDate    DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  title       String
+  targetOrders Int
+  reward      String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Reward {
+  id          String @id @default(cuid())
+  orders      Int
+  prize       String
+  active      Boolean @default(true)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String?
+  type      String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
